@@ -27,16 +27,18 @@ view: diet {
   dimension_group: time {
     type: time
     timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
+      week
     ]
     sql: ${TABLE}.time_date ;;
   }
+
+dimension: bi_weekly {
+  type:  string
+  sql: CASE WHEN
+MOD(extract(week from ${TABLE}.time),2)
+THEN TO_CHAR(DATE_TRUNC('week', DATEADD(week,1,${TABLE}.time)), 'YYYY-MM-DD')
+ELSE TO_CHAR(DATE_TRUNC('week', ${TABLE}.time, 'YYYY-MM-DD') END  ;;
+}
 
   measure: count {
     type: count
