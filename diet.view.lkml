@@ -24,15 +24,14 @@ view: diet {
     sql: ${TABLE}.notes ;;
   }
 
-  dimension_group: time {
-    type: time
-    timeframes: [
-      week
-    ]
+  dimension: timetest {
+    type: string
     sql: ${TABLE}.time_date ;;
+    suggest_dimension: Test.testdate
   }
 
 dimension: bi_weekly {
+  description: "http://google.ie"
   type:  string
   sql: CASE WHEN
 MOD(extract(week from ${TABLE}.time),2)

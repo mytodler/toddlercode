@@ -38,6 +38,11 @@ view: steps {
     sql: ${TABLE}.time_date ;;
   }
 
+  dimension: raw_time {
+    type: string
+    sql: TO_CHAR (${TABLE}.time_date) ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [id, miniusers.id, miniusers.first_name, miniusers.last_name]

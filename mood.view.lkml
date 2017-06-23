@@ -19,10 +19,43 @@ view: mood {
     sql: ${TABLE}.miniuser_id ;;
   }
 
+  filter: date_filter {
+    type: date
+    default_value: "now"
+  }
+
+
+
   dimension: mood_rating {
     type: number
     sql: ${TABLE}.mood_rating ;;
+    html: {{ value }}
+    {% assign url = link %}
+      {% if url contains 'dashboards/3' %}
+      {% assign dashboard_no = '3' %}
+      {% else %}
+      {% assign dashboard_no = '21' %}
+      {% endif %}
+    <a href="https://mvf.looker.com/dashboards/{{ dashboard_no }}?Subcategory={{ value }}" >
+    <img src="http://google.com/favicon.ico"></a>;;
+
   }
+
+  dimension: mood_ratingv2 {
+    type: number
+    sql: ${TABLE}.mood_rating ;;
+    link: {
+      label: "Last 14 days"
+      icon_url: "http://www.looker.com/favicon.ico"
+      url: "{% assign url = link %}
+      {% if url contains 'embed' %}
+      {% assign embed_part = '/embed/' %}
+      {% else %}
+      {% assign embed_part = '/' %}
+      {% endif %}
+      {{embed_part}}dashboards/360"
+    }
+    }
 
   dimension: notes {
     type: string
@@ -38,13 +71,34 @@ view: mood {
       week,
       month,
       quarter,
-      year
+      year,
+      minute
     ]
     sql: ${TABLE}.time_date ;;
+  }
+
+  measure: last_updated_date {
+    type: date
+    sql: MAX(${time_raw});;
+    convert_tz: no
   }
 
   measure: count {
     type: count
     drill_fields: [id, miniusers.id, miniusers.first_name, miniusers.last_name]
   }
+
+  measure: haveresults_count {
+    type: count
+    filters: {
+      field: mood_rating
+      value: ">0"
+    }
+    }
+
+    measure: divisioncount {
+      type: number
+      sql: ${count}/${haveresults_count} ;;
+    }
+
 }
